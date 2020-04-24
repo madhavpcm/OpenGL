@@ -1,0 +1,10 @@
+static void ErrorClear() {
+    //geterror() returns 0 if no error
+    while (glGetError()!=GL_NO_ERROR);
+}
+static void ErrorMsg() {
+    //
+    while (GLenum error = glGetError()) {
+        std::cout << "OPENGL ERROR :: [" << error << "]" << std::endl;
+    }
+}
