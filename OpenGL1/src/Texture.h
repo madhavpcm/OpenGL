@@ -10,7 +10,7 @@ private:
 	int m_width,  m_height , m_BPP;
 
 public:
-	Texture(const std::string& filepath);
+	Texture(const std::string& filepath );
 	~Texture();
 
 	void Bind(unsigned int slot = 0) const;

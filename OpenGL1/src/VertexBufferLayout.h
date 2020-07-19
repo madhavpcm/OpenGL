@@ -16,7 +16,6 @@ struct VertexBufferElement {
 		}
 		return 0;
 	}
-
 };
 class VertexBufferLayout {
 private:

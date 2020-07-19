@@ -2,18 +2,20 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <filesystem>
 #include <GL/glew.h>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <streambuf>
 #include "Shader.h"
 #include "ErrorChecker.h"
-
-
-
+namespace fs = std::filesystem;
 
 Shader::Shader(const std::string& filepath) 
 	: m_filepath(filepath) , m_RendererID(0)
 {
     ShaderSource s = parseshader(filepath);
+    //std::cout << "\n" << s.vSource << "\n" << s.fSource;
     m_RendererID = createShader(s.vSource, s.fSource);
 }
 Shader::~Shader() 
@@ -42,7 +44,9 @@ void Shader::setUniform3f(const std::string& name, float v0, float v1, float v2)
 void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GL_CHECK(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
 }
-
+void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
+    GL_CHECK(glUniformMatrix4fv(GetUniformLocation(name), 1 , GL_FALSE , &matrix[0][0]));
+}
 int Shader::GetUniformLocation(const std::string& name) {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
         return m_UniformLocationCache[name];
@@ -59,31 +63,24 @@ int Shader::GetUniformLocation(const std::string& name) {
 }
 
  ShaderSource Shader::parseshader(const std::string& path) {
-    std::ifstream stream(path);
-    std::string line;
-    enum class Stype {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-    std::stringstream ss[2];
-    Stype type = Stype::NONE;
-    while (getline(stream, line)) {
-        if (line.find("#shader") != std::string::npos)
-        {
-            if (line.find("vertex") != std::string::npos)
-            {
-                type = Stype::VERTEX;
-            }
-            else if (line.find("fragment") != std::string::npos)
-            {
-                type = Stype::FRAGMENT;
-            }
+    std::string ss[2];//0 for vertex, 1 for fragment
+
+    for (const auto& entry : fs::directory_iterator(path)) {//fetch all files of a shader directory(can be improved )
+        std::ifstream t(entry.path().string());
+        std::string str((std::istreambuf_iterator<char>(t)),
+        std::istreambuf_iterator<char>());
+        std::cout << entry.path().string()<<std::endl;
+        if (entry.path().string().find("vertex") != std::string::npos) {
+            ss[0] = str;
+            std::cout << ss[0] << "vertex" << std::endl;
         }
-        else {
-            ss[(int)type] << line << '\n';
+        else if (entry.path().string().find("fragment")!= std::string::npos) {
+            ss[1] = str;
+            std::cout << ss[1] << "fragment" << std::endl;
         }
     }
-    stream.close();
-    return { ss[0].str(),ss[1].str() };
+
+    return { ss[0],ss[1]};
 
 }
  unsigned int Shader::createShader(const std::string& vertexShader, const std::string& fragmentShader) {
