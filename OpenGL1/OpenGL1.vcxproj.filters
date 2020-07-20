@@ -1380,5 +1380,8 @@
     <Image Include="Res\RAW\ez.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Res\RAW\EZ2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

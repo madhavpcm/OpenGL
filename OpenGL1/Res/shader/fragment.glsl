@@ -1,14 +1,11 @@
 #version 410 core
 
-layout(location = 0) out vec4 color;
-in vec2 v_texCoord;
-uniform float mixValue;
-uniform vec4 u_color;
-uniform sampler2D u_Texture1;
-uniform sampler2D u_Texture2;
+out vec4 color;
+
+uniform vec3 objectColor;
+uniform vec3 lightColor;
 
 void main()
 {
-    vec4 texColor = mix(texture(u_Texture1,v_texCoord), texture(u_Texture2,v_texCoord),mixValue);
-    color = texColor;
+    color = vec4(lightColor * objectColor, 1.0);
 };

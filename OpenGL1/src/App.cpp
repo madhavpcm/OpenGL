@@ -31,14 +31,14 @@ void processInput(GLFWwindow* window){
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         mixValue += 0.01f; 
-        if (mixValue >= 1.0f)
-            mixValue = 1.0f;
+        if (mixValue >= 0.0f)
+            mixValue = 0.0f;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         mixValue -= 0.01f; 
-        if (mixValue <= 0.0f)
-            mixValue = 0.0f;
+        if (mixValue <= -1.0f)
+            mixValue = -1.0f;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
@@ -112,41 +112,41 @@ int main(void)
  
 {
     float vertices[] = {
-         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+          -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
           0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
           0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
           0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
          -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
          -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-    
+
          -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
           0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
           0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
           0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
          -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
          -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    
+
          -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
          -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
          -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
          -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
          -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
          -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    
+
           0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
           0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
           0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
           0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
           0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
           0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    
+
          -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
           0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
           0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
           0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
          -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
          -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    
+
          -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
           0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
           0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
@@ -166,47 +166,48 @@ int main(void)
         glm::vec3(-8.5f,  0.2f, -1.5f),
         glm::vec3(-3.3f,  0.0f, -2.5f)
     };
+    glm::vec3 lightPositions[]{
+        glm::vec3(1.2f, 1.0f, 2.0f)
+    };
     unsigned int index[] = {
         0,1,2,
         2,3,0,
-
     };
-    
+
+
     GL_CHECK(glEnable(GL_BLEND));
     GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     
-    VertexArray va;
+    VertexArray va,la;
     VertexBufferLayout layout;
     VertexBuffer vb(vertices,  36 * 5 * sizeof(float));
-    
+    vb.Bind();
 
     layout.Push<float>(3);/*SEtting up the layout, we say each vertex element consists of 2 sets of coordinates (vertex coord and texture coord_)*/
     layout.Push<float>(2);
 
+    va.Bind();
+    la.Bind();
+
     va.AddBuffer(vb, layout);
+    la.AddBuffer(vb, layout);
 
     IndexBuffer ib(index, 12);
     
-    Shader shader("Res/shader/");
+    Shader shader("Res/shader/"); 
+    Shader lightshader("Res/shader/lightcube/");
 
-    shader.Bind();
     float r = 0.0f;
     float i = 0.05f;
-
-    Texture tex1("Res/RAW/EZ.png");
-    Texture tex2("Res/RAW/EZ2.png");
-    
-    shader.setUniform1i("u_Texture1", 0);
-    shader.setUniform1i("u_Texture2", 1);
-   
-    va.Bind();
 
     va.UnBind();
     vb.UnBind();
     ib.UnBind();
-    shader.Unbind();
+    //shader.Unbind();
+    lightshader.Unbind();
 
     Renderer renderer;
+    Renderer lightRenderer;
     ImGui::CreateContext(); 
     ImGui_ImplGlfwGL3_Init(window, true);
     
@@ -217,36 +218,47 @@ int main(void)
         //Input
         processInput(window);
         //calc
-        
+        mixValue;
         /* Render here */
-        glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        renderer.Clear();
+        lightRenderer.Clear();
+
         float radius = 10.0f;
-
-        view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(-camX, -camY,- camZ), glm::vec3(0.0f, 1.0f, 0.0f));
-        shader.setUniformMat4f("view", view);
-
+        glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(-camX, -camY, -camZ), glm::vec3(0.0f, 1.0f, 0.0f));
         glm::mat4 proj = glm::mat4(1.0f);
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-        shader.setUniformMat4f("projection", proj);
+        shader.Bind();
+        shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
+        shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
         shader.setUniformMat4f("view", view);
-        renderer.Clear();
-        tex1.Bind(0);
-        tex2.Bind(1);
-        ImGui_ImplGlfwGL3_NewFrame();
-
-        for (int I = 0; I < 10; I++) {
+        shader.setUniformMat4f("projection", proj);
+        for (int I = 0; I < 2; I++) {
+            //Model of other cubes
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[I]);
-            float angle = 30.0f * I;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             shader.setUniformMat4f("model", model);
-            shader.setUniform1f("mixValue", mixValue);
             renderer.Draw(va, ib, shader);
         }
-        //model = glm::rotate(model, glm::radians(X), glm::vec3(1.0f, 0.0f, 0.0f));
-        //model = glm::rotate(model, glm::radians(Y), glm::vec3(0.0f, 1.0f, 0.0f));
 
+        //tex1.Bind(0);
+        //tex2.Bind(1);
+
+        ImGui_ImplGlfwGL3_NewFrame();
+
+        //Model of light cub
+        glm::mat4 lmodel = glm::mat4(1.0f);
+        lmodel = glm::translate(lmodel, lightPositions[0]);
+        lmodel = glm::scale(lmodel, glm::vec3(0.3f));
+        lightshader.Bind();
+        lightshader.setUniformMat4f("projection", proj);
+        lightshader.setUniformMat4f("view", view);
+        lightshader.setUniformMat4f("model", lmodel);        
+        lightRenderer.Draw(la, ib, lightshader);
+
+        shader.Unbind();
+        lightshader.Unbind();
         //Imgui
         {
             static float f = 0.0f;

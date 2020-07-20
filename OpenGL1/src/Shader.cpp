@@ -17,6 +17,7 @@ Shader::Shader(const std::string& filepath)
     ShaderSource s = parseshader(filepath);
     //std::cout << "\n" << s.vSource << "\n" << s.fSource;
     m_RendererID = createShader(s.vSource, s.fSource);
+
 }
 Shader::~Shader() 
 {
@@ -40,6 +41,7 @@ void Shader::setUniform2f(const std::string& name, float v0, float v1) {
 }
 void Shader::setUniform3f(const std::string& name, float v0, float v1, float v2) {
     GL_CHECK(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+
 }
 void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GL_CHECK(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));

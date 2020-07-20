@@ -605,6 +605,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Res\RAW\ez.png" />
+    <Image Include="Res\RAW\EZ2.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
