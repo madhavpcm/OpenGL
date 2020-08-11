@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\ErrorChecker.cpp" />
     <ClCompile Include="src\git\glm\detail\glm.cpp" />
@@ -300,6 +301,8 @@
     <None Include="src\git\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\ErrorChecker.h" />
     <ClInclude Include="src\git\glm\common.hpp" />
     <ClInclude Include="src\git\glm\detail\compute_common.hpp" />

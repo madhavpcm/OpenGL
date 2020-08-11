@@ -18,66 +18,9 @@
 #include "Renderer.h"
 #include "git/imgui/imgui.h"
 #include "git/imgui/imgui_impl_glfw_gl3.h"
-
-float mixValue = 0.5;
-float X = 90.0f;
-float Y = 90.0f;
-float camX = 0.0f;
-float camY = 0.0f;
-float camZ = 9.0f;
-void processInput(GLFWwindow* window){
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        mixValue += 0.01f; 
-        if (mixValue >= 0.0f)
-            mixValue = 0.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        mixValue -= 0.01f; 
-        if (mixValue <= -1.0f)
-            mixValue = -1.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        camX -= 0.1f;
-        if (camX <= -10.0f)
-            camX = -10.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        camX += 0.1f;
-        if (camX >= 10.0f)
-            camX = 10.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        camZ += 0.1f;
-        if (camZ >= 10.0f)
-            camZ = 10.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        camZ -= 0.1f;
-        if (camZ >= 6.0f)
-            camZ = 6.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        camY += 0.1f;
-        if (camY >= 10.0f)
-            camY = 10.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        camY -= 0.1f;
-        if (camY >= 0.0f)
-            camY = 0.0f;
-    }
-}
-
+#include "camera.h"
+#include "Input.h"
+//camera s
 bool show_demo_window = true;
 bool show_another_window = false;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -101,7 +44,9 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSetCursorPosCallback(window, mouse_input);
     glfwSwapInterval(1);
+
     if (GLEW_OK != glewInit())
     {
         /* Problem: glewInit failed, something is seriously wrong. */
@@ -112,47 +57,47 @@ int main(void)
  
 {
     float vertices[] = {
-          -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f , 0.0f ,-1.0f,
+          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f , 0.0f ,-1.0f,
+          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f , 0.0f ,-1.0f,
+          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f , 0.0f ,-1.0f,
+         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f , 0.0f ,-1.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f , 0.0f ,-1.0f,
 
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f , 0.0f , 1.0f,
+          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f , 0.0f , 1.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f , 0.0f , 1.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f , 0.0f , 1.0f,
+         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0.0f , 0.0f , 1.0f,
+         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f , 0.0f , 1.0f,
 
-         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f, 0.0f , 0.0f,
+         -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  -1.0f, 0.0f , 0.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f, 0.0f , 0.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f, 0.0f , 0.0f,
+         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  -1.0f, 0.0f , 0.0f,
+         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f, 0.0f , 0.0f,
 
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-          0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f, 0.0f , 0.0f,
+          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   1.0f, 0.0f , 0.0f,
+          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f, 0.0f , 0.0f,
+          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f, 0.0f , 0.0f,
+          0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   1.0f, 0.0f , 0.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f, 0.0f , 0.0f,
 
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-          0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,-1.0f,  0.0f,
+          0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f ,-1.0f,  0.0f,
+          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,-1.0f,  0.0f,
+          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,-1.0f,  0.0f,
+         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f ,-1.0f,  0.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,-1.0f,  0.0f,
 
-         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,1.0f,  0.0f,
+          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f ,1.0f,  0.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,1.0f,  0.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,1.0f,  0.0f,
+         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0.0f ,1.0f,  0.0f,
+         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,1.0f,  0.0f
     };
     glm::vec3 cubePositions[] = {
         glm::vec3(1.0f,  0.0f,  0.0f),
@@ -169,6 +114,7 @@ int main(void)
     glm::vec3 lightPositions[]{
         glm::vec3(1.2f, 1.0f, 2.0f)
     };
+
     unsigned int index[] = {
         0,1,2,
         2,3,0,
@@ -180,11 +126,12 @@ int main(void)
     
     VertexArray va,la;
     VertexBufferLayout layout;
-    VertexBuffer vb(vertices,  36 * 5 * sizeof(float));
+    VertexBuffer vb(vertices,  36 * 8 * sizeof(float));
     vb.Bind();
 
     layout.Push<float>(3);/*SEtting up the layout, we say each vertex element consists of 2 sets of coordinates (vertex coord and texture coord_)*/
     layout.Push<float>(2);
+    layout.Push<float>(3);
 
     va.Bind();
     la.Bind();
@@ -218,14 +165,20 @@ int main(void)
         //Input
         processInput(window);
         //calc
-        mixValue;
+
         /* Render here */
         renderer.Clear();
         lightRenderer.Clear();
 
         float radius = 10.0f;
+
+        float currentFrame = glfwGetTime();
+        dt = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(-camX, -camY, -camZ), glm::vec3(0.0f, 1.0f, 0.0f));
+        view = glm::lookAt(camPos, camPos + camFront, camUp);
+
         glm::mat4 proj = glm::mat4(1.0f);
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
@@ -234,7 +187,9 @@ int main(void)
         shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
         shader.setUniformMat4f("view", view);
         shader.setUniformMat4f("projection", proj);
-        for (int I = 0; I < 2; I++) {
+        shader.setUniform3f("lightPos" , lightPositions[0].x, lightPositions[0].y, lightPositions[0].z);
+
+        for (int I = 0; I < 10; I++) {
             //Model of other cubes
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[I]);
