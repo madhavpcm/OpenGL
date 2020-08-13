@@ -12,6 +12,7 @@ public:
 	~VertexArray();
 
 	void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+	void AddBuffer(const std::vector<VertexBuffer>& vb, const VertexBufferLayout& layout);
 
 	void Bind() const;
 

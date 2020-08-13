@@ -44,13 +44,13 @@ void mouse_input(GLFWwindow* window , double xpos , double ypos) {
     xoff *= mouse_sensitivity;
     yoff *= mouse_sensitivity;
 
+    /*if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;*/
     yaw += xoff;
     pitch += yoff;
 
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    else if (pitch < -89.0f)
-        pitch = -89.0f;
 
     glm::vec3 camDir(1.0f);
     camDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));

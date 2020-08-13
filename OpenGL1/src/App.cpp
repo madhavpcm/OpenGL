@@ -40,11 +40,12 @@ int main(void)
         return -1;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+   
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-    glfwSetCursorPosCallback(window, mouse_input);
+   // glfwSetCursorPosCallback(window, mouse_input);
     glfwSwapInterval(1);
 
     if (GLEW_OK != glewInit())
@@ -55,49 +56,43 @@ int main(void)
     }
     std::cout << glGetString(GL_VERSION) << std::endl;
  
-{
+{/*      <---Positions----><--NormalVectors-->     */      
     float vertices[] = {
-         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f , 0.0f ,-1.0f,
-          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f , 0.0f ,-1.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f , 0.0f ,-1.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f , 0.0f ,-1.0f,
-         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f , 0.0f ,-1.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f , 0.0f ,-1.0f,
+        // Front face
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
 
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f , 0.0f , 1.0f,
-          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f , 0.0f , 1.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f , 0.0f , 1.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f , 0.0f , 1.0f,
-         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0.0f , 0.0f , 1.0f,
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f , 0.0f , 1.0f,
+        // Back face
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
 
-         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f, 0.0f , 0.0f,
-         -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  -1.0f, 0.0f , 0.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f, 0.0f , 0.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f, 0.0f , 0.0f,
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  -1.0f, 0.0f , 0.0f,
-         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f, 0.0f , 0.0f,
+        // Top face
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
 
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f, 0.0f , 0.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   1.0f, 0.0f , 0.0f,
-          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f, 0.0f , 0.0f,
-          0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f, 0.0f , 0.0f,
-          0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   1.0f, 0.0f , 0.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f, 0.0f , 0.0f,
+        // Bottom face
+        -0.5f, -0.5f, -0.5f, 0.0f,-1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f, 0.0f,-1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f, 0.0f,-1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f,-1.0f, 0.0f,
 
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,-1.0f,  0.0f,
-          0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f ,-1.0f,  0.0f,
-          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,-1.0f,  0.0f,
-          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,-1.0f,  0.0f,
-         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f ,-1.0f,  0.0f,
-         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,-1.0f,  0.0f,
-
-         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,1.0f,  0.0f,
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f ,1.0f,  0.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,1.0f,  0.0f,
-          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f ,1.0f,  0.0f,
-         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0.0f ,1.0f,  0.0f,
-         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f ,1.0f,  0.0f
+        // Right face
+         0.5f, -0.5f, -0.5f,-1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,-1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
+                                  
+        // Left face         1     
+        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f
     };
     glm::vec3 cubePositions[] = {
         glm::vec3(1.0f,  0.0f,  0.0f),
@@ -114,32 +109,42 @@ int main(void)
     glm::vec3 lightPositions[]{
         glm::vec3(1.2f, 1.0f, 2.0f)
     };
-
+    float normalVectors[] = {
+         0.0f, 0.0f, 1.0f,
+         1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f,-1.0f,
+        -1.0f, 0.0f, 0.0f,
+         0.0f,-1.0f, 0.0f,
+         0.0f, 1.0f, 0.0f
+    };
     unsigned int index[] = {
-        0,1,2,
-        2,3,0,
+        0,  1,   2,  0,  2,  3,    // front
+        4,  5,   6,  4,  6,  7,    // back
+        8,  9,  10,  8,  10, 11,   // top
+        12, 13, 14,  12, 14, 15,   // bottom
+        16, 17, 18,  16, 18, 19,   // right
+        20, 21, 22,  20, 22, 23,   // left
     };
 
 
-    GL_CHECK(glEnable(GL_BLEND));
+    GL_CHECK(glEnable(GL_BLEND| GL_DEPTH_TEST));
     GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     
     VertexArray va,la;
+    VertexBuffer vb(vertices, 24 * 6 *sizeof(float));
     VertexBufferLayout layout;
-    VertexBuffer vb(vertices,  36 * 8 * sizeof(float));
-    vb.Bind();
-
-    layout.Push<float>(3);/*SEtting up the layout, we say each vertex element consists of 2 sets of coordinates (vertex coord and texture coord_)*/
-    layout.Push<float>(2);
-    layout.Push<float>(3);
+    layout.Push<float>(3);//Positions 
+    layout.Push<float>(3);//Normal 
+    
 
     va.Bind();
     la.Bind();
 
     va.AddBuffer(vb, layout);
+
     la.AddBuffer(vb, layout);
 
-    IndexBuffer ib(index, 12);
+    IndexBuffer ib(index, 24);
     
     Shader shader("Res/shader/"); 
     Shader lightshader("Res/shader/lightcube/");

@@ -302,6 +302,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\git\Header.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\ErrorChecker.h" />
     <ClInclude Include="src\git\glm\common.hpp" />
