@@ -59,40 +59,35 @@ int main(void)
 {/*      <---Positions----><--NormalVectors-->     */      
     float vertices[] = {
         // Front face
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,-1.0f,
-
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
         // Back face
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
         // Top face
         -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
         -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
          0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
          0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-
         // Bottom face
         -0.5f, -0.5f, -0.5f, 0.0f,-1.0f, 0.0f,
          0.5f, -0.5f, -0.5f, 0.0f,-1.0f, 0.0f,
          0.5f, -0.5f,  0.5f, 0.0f,-1.0f, 0.0f,
         -0.5f, -0.5f,  0.5f, 0.0f,-1.0f, 0.0f,
-
         // Right face
-         0.5f, -0.5f, -0.5f,-1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,-1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
-                                  
-        // Left face         1     
-        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f
+         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,                      
+        // Left face             
+        -0.5f, -0.5f, -0.5f,-1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,-1.0f, 0.0f, 0.0f
     };
     glm::vec3 cubePositions[] = {
         glm::vec3(1.0f,  0.0f,  0.0f),
@@ -109,29 +104,22 @@ int main(void)
     glm::vec3 lightPositions[]{
         glm::vec3(1.2f, 1.0f, 2.0f)
     };
-    float normalVectors[] = {
-         0.0f, 0.0f, 1.0f,
-         1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f,-1.0f,
-        -1.0f, 0.0f, 0.0f,
-         0.0f,-1.0f, 0.0f,
-         0.0f, 1.0f, 0.0f
-    };
+
     unsigned int index[] = {
         0,  1,   2,  0,  2,  3,    // front
         4,  5,   6,  4,  6,  7,    // back
         8,  9,  10,  8,  10, 11,   // top
         12, 13, 14,  12, 14, 15,   // bottom
         16, 17, 18,  16, 18, 19,   // right
-        20, 21, 22,  20, 22, 23,   // left
+        20, 21, 22,  20, 22, 23   // left
     };
 
 
-    GL_CHECK(glEnable(GL_BLEND| GL_DEPTH_TEST));
+    GL_CHECK(glEnable(GL_DEPTH_TEST));
     GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     
     VertexArray va,la;
-    VertexBuffer vb(vertices, 24 * 6 *sizeof(float));
+    VertexBuffer vb(vertices, 6* 4 * 6 *sizeof(float));
     VertexBufferLayout layout;
     layout.Push<float>(3);//Positions 
     layout.Push<float>(3);//Normal 
@@ -144,7 +132,7 @@ int main(void)
 
     la.AddBuffer(vb, layout);
 
-    IndexBuffer ib(index, 24);
+    IndexBuffer ib(index, 36);
     
     Shader shader("Res/shader/"); 
     Shader lightshader("Res/shader/lightcube/");
@@ -188,16 +176,19 @@ int main(void)
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         shader.Bind();
+        shader.setUniform1f("specularStrength", specularStrength);
         shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
         shader.setUniformMat4f("view", view);
         shader.setUniformMat4f("projection", proj);
-        shader.setUniform3f("lightPos" , lightPositions[0].x, lightPositions[0].y, lightPositions[0].z);
+        shader.setUniformvec3("lightPos" , lightPositions[0]);
+        shader.setUniformvec3("viewPos", camPos);
 
         for (int I = 0; I < 10; I++) {
             //Model of other cubes
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[I]);
+            model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
             shader.setUniformMat4f("model", model);
             renderer.Draw(va, ib, shader);
         }

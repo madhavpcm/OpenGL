@@ -9,27 +9,50 @@ void processInput(GLFWwindow* window) {
         mixValue += 0.01f;
         if (mixValue >= 1.0f)
             mixValue = 1.0f;
+
+        specularStrength += 0.1f;
+        if (specularStrength >= 1.0f)
+            specularStrength = 1.0f;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         mixValue -= 0.01f;
         if (mixValue <= 0.0f)
             mixValue = 0.0f;
+        specularStrength -= 0.1f;
+        if (specularStrength <= 0.0f)
+            specularStrength = 0.0f;
     }
+    
     float cameraSpeed = 2.5f * dt;
+    camFront.x = cos(glm::radians(yaw));
+    camFront.z = sin(glm::radians(yaw));
+    camFront = glm::normalize(camFront);;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camPos += cameraSpeed * camFront;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camPos -= cameraSpeed * camFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        //camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+        yaw -= cameraSpeed * 50;
+
+        camFront.x = cos(glm::radians(yaw));
+        camFront.z = sin(glm::radians(yaw));
+        camFront = glm::normalize(camFront);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        //camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+        yaw += cameraSpeed * 50;
+        
+        camFront.x = cos(glm::radians(yaw));
+        camFront.z = sin(glm::radians(yaw));
+        camFront = glm::normalize(camFront);
+    }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+        camPos -= glm::normalize(-camUp) * cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+        camPos += glm::normalize(-camUp) * cameraSpeed;
 
 }
 void mouse_input(GLFWwindow* window , double xpos , double ypos) {
@@ -44,10 +67,10 @@ void mouse_input(GLFWwindow* window , double xpos , double ypos) {
     xoff *= mouse_sensitivity;
     yoff *= mouse_sensitivity;
 
-    /*if (pitch > 89.0f)
+    if (pitch > 89.0f)
         pitch = 89.0f;
     if (pitch < -89.0f)
-        pitch = -89.0f;*/
+        pitch = -89.0f;
     yaw += xoff;
     pitch += yoff;
 

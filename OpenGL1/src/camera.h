@@ -14,3 +14,6 @@ bool firstMouse = true;
 float mouse_sensitivity = 0.01f;
 
 float yaw = 0.0f, pitch = -89.0f;
+
+
+float specularStrength =0.5f;
