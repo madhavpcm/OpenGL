@@ -1387,6 +1387,12 @@
     <ClInclude Include="src\git\Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\AmbientFactors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Res\RAW\ez.png">
@@ -1395,5 +1401,8 @@
     <Image Include="Res\RAW\EZ2.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="x64\Notes.txt" />
   </ItemGroup>
 </Project>

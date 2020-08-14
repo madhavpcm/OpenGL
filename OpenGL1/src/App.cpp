@@ -16,8 +16,12 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Renderer.h"
+
 #include "git/imgui/imgui.h"
 #include "git/imgui/imgui_impl_glfw_gl3.h"
+
+#include "VertexData.h"
+#include "AmbientFactors.h"
 #include "camera.h"
 #include "Input.h"
 //camera s
@@ -57,62 +61,7 @@ int main(void)
     std::cout << glGetString(GL_VERSION) << std::endl;
  
 {/*      <---Positions----><--NormalVectors-->     */      
-    float vertices[] = {
-        // Front face
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        // Back face
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f,-1.0f,
-        // Top face
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        // Bottom face
-        -0.5f, -0.5f, -0.5f, 0.0f,-1.0f, 0.0f,
-         0.5f, -0.5f, -0.5f, 0.0f,-1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f, 0.0f,-1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f,-1.0f, 0.0f,
-        // Right face
-         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,                      
-        // Left face             
-        -0.5f, -0.5f, -0.5f,-1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,-1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,-1.0f, 0.0f, 0.0f
-    };
-    glm::vec3 cubePositions[] = {
-        glm::vec3(1.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -5.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(0.3f, -3.0f, -2.5f),
-        glm::vec3(-0.5f,  6.0f, -2.5f),
-        glm::vec3(-8.5f,  0.2f, -1.5f),
-        glm::vec3(-3.3f,  0.0f, -2.5f)
-    };
-    glm::vec3 lightPositions[]{
-        glm::vec3(1.2f, 1.0f, 2.0f)
-    };
 
-    unsigned int index[] = {
-        0,  1,   2,  0,  2,  3,    // front
-        4,  5,   6,  4,  6,  7,    // back
-        8,  9,  10,  8,  10, 11,   // top
-        12, 13, 14,  12, 14, 15,   // bottom
-        16, 17, 18,  16, 18, 19,   // right
-        20, 21, 22,  20, 22, 23   // left
-    };
 
 
     GL_CHECK(glEnable(GL_DEPTH_TEST));
@@ -127,7 +76,7 @@ int main(void)
 
     va.Bind();
     la.Bind();
-
+    float theta = 0.0f;
     va.AddBuffer(vb, layout);
 
     la.AddBuffer(vb, layout);
@@ -176,12 +125,14 @@ int main(void)
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         shader.Bind();
-        shader.setUniform1f("specularStrength", specularStrength);
-        shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
+        shader.setUniform1f("ambientStrength", AmbientSterngth);
         shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
+        shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setUniformMat4f("view", view);
         shader.setUniformMat4f("projection", proj);
         shader.setUniformvec3("lightPos" , lightPositions[0]);
+        shader.setUniform1f("shineExp", shinynessExponent);
+        shader.setUniform1f("specularStrength", specularStrength);
         shader.setUniformvec3("viewPos", camPos);
 
         for (int I = 0; I < 10; I++) {
@@ -197,6 +148,8 @@ int main(void)
         //tex2.Bind(1);
 
         ImGui_ImplGlfwGL3_NewFrame();
+        
+
 
         //Model of light cub
         glm::mat4 lmodel = glm::mat4(1.0f);
@@ -212,10 +165,13 @@ int main(void)
         lightshader.Unbind();
         //Imgui
         {
-            static float f = 0.0f;
             static int counter = 0;
-            ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            // Display some text (you can use a format string too)
+            ImGui::Text("Ambience Controls");
+
+            ImGui::SliderInt("Shinyness", &shinynessExponent, 3, 8);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            ImGui::SliderFloat("AmbientStrength", &AmbientSterngth, 0.05f, 1.0f);
+            ImGui::SliderFloat("specularStrength",&specularStrength, 0.0f, 1.0f);
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state

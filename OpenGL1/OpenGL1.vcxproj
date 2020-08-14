@@ -303,6 +303,8 @@
   <ItemGroup>
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\git\Header.h" />
+    <ClInclude Include="src\AmbientFactors.h" />
+    <ClInclude Include="src\VertexData.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\ErrorChecker.h" />
     <ClInclude Include="src\git\glm\common.hpp" />
@@ -610,6 +612,9 @@
   <ItemGroup>
     <Image Include="Res\RAW\ez.png" />
     <Image Include="Res\RAW\EZ2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="x64\Notes.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
