@@ -1,27 +1,29 @@
 #pragma once
-float mixValue = 0.5;
+
+float mixValue = 0.5, ss =0.5f;
 void processInput(GLFWwindow* window) {
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         mixValue += 0.01f;
         if (mixValue >= 1.0f)
             mixValue = 1.0f;
 
-        specularStrength += 0.1f;
-        if (specularStrength >= 1.0f)
-            specularStrength = 1.0f;
+        ss += 0.1f;
+        if (ss >= 1.0f)
+            ss = 1.0f;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         mixValue -= 0.01f;
         if (mixValue <= 0.0f)
             mixValue = 0.0f;
-        specularStrength -= 0.1f;
-        if (specularStrength <= 0.0f)
-            specularStrength = 0.0f;
+        ss -= 0.1f;
+        if (ss <= 0.0f)
+            ss = 0.0f;
     }
     
     float cameraSpeed = 2.5f * dt;

@@ -52,6 +52,15 @@ void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
 void Shader::setUniformvec3(const std::string& name, glm::vec3 v) {
     GL_CHECK(glUniform3f(GetUniformLocation(name), v.x, v.y ,v.z));
 }
+void Shader::setUniformblock_Material(block_Materials& b) {
+
+    setUniformvec3("block.ambientStrength",  b.getAmbientStrength());
+    setUniformvec3("block.diffusionFactor",  b.getDiffusionFactor());
+    setUniformvec3("block.specularStrength", b.getSpecularStrength());
+    setUniform1i("block.shineExp", b.getshinynessExponent());
+
+}
+
 int Shader::GetUniformLocation(const std::string& name) {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
         return m_UniformLocationCache[name];

@@ -7,8 +7,10 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "initBlockData.h"
 
 #include "Texture.h"
+#include "blockMaterials.h"
 #include "ErrorChecker.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
@@ -21,7 +23,6 @@
 #include "git/imgui/imgui_impl_glfw_gl3.h"
 
 #include "VertexData.h"
-#include "AmbientFactors.h"
 #include "camera.h"
 #include "Input.h"
 //camera s
@@ -59,21 +60,23 @@ int main(void)
 
     }
     std::cout << glGetString(GL_VERSION) << std::endl;
- 
-{/*      <---Positions----><--NormalVectors-->     */      
-
-
-
     GL_CHECK(glEnable(GL_DEPTH_TEST));
     GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     
     VertexArray va,la;
     VertexBuffer vb(vertices, 6* 4 * 6 *sizeof(float));
     VertexBufferLayout layout;
+
+    int blockSelector=0;
+    
+    std::vector <block_Materials> database(25);
+    initBlockDatas(database);
+    block_Materials s;
+    
+    
     layout.Push<float>(3);//Positions 
     layout.Push<float>(3);//Normal 
     
-
     va.Bind();
     la.Bind();
     float theta = 0.0f;
@@ -97,9 +100,9 @@ int main(void)
 
     Renderer renderer;
     Renderer lightRenderer;
+
     ImGui::CreateContext(); 
     ImGui_ImplGlfwGL3_Init(window, true);
-    
     ImGui::StyleColorsDark();
 
     while (!glfwWindowShouldClose(window))
@@ -125,15 +128,14 @@ int main(void)
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         shader.Bind();
-        shader.setUniform1f("ambientStrength", AmbientSterngth);
+        
         shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
         shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setUniformMat4f("view", view);
         shader.setUniformMat4f("projection", proj);
         shader.setUniformvec3("lightPos" , lightPositions[0]);
-        shader.setUniform1f("shineExp", shinynessExponent);
-        shader.setUniform1f("specularStrength", specularStrength);
         shader.setUniformvec3("viewPos", camPos);
+        shader.setUniformblock_Material(s);
 
         for (int I = 0; I < 10; I++) {
             //Model of other cubes
@@ -148,9 +150,7 @@ int main(void)
         //tex2.Bind(1);
 
         ImGui_ImplGlfwGL3_NewFrame();
-        
-
-
+       
         //Model of light cub
         glm::mat4 lmodel = glm::mat4(1.0f);
         lmodel = glm::translate(lmodel, lightPositions[0]);
@@ -169,9 +169,8 @@ int main(void)
             // Display some text (you can use a format string too)
             ImGui::Text("Ambience Controls");
 
-            ImGui::SliderInt("Shinyness", &shinynessExponent, 3, 8);            // Edit 1 float using a slider from 0.0f to 1.0f    
-            ImGui::SliderFloat("AmbientStrength", &AmbientSterngth, 0.05f, 1.0f);
-            ImGui::SliderFloat("specularStrength",&specularStrength, 0.0f, 1.0f);
+            ImGui::SliderInt("Shinyness", &blockSelector ,0, 24);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state
@@ -191,7 +190,7 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
-    }
+    
     ImGui_ImplGlfwGL3_Shutdown();
     ImGui::DestroyContext();
     glfwTerminate();

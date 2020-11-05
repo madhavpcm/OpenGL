@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -146,7 +146,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="src\initBlockData.cpp" />
+    <ClCompile Include="src\initBlockData.h" />
+    <ClCompile Include="src\blockMaterials.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\ErrorChecker.cpp" />
     <ClCompile Include="src\git\glm\detail\glm.cpp" />
@@ -301,9 +303,10 @@
     <None Include="src\git\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\blockMaterials.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\git\Header.h" />
-    <ClInclude Include="src\AmbientFactors.h" />
+    <ClInclude Include="src\git\nholmanjson\json.hpp" />
     <ClInclude Include="src\VertexData.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\ErrorChecker.h" />
@@ -614,6 +617,7 @@
     <Image Include="Res\RAW\EZ2.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Res\BlockData\material_shader.txt" />
     <Text Include="x64\Notes.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

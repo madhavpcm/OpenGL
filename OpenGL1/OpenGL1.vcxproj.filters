@@ -57,7 +57,13 @@
     <ClCompile Include="src\git\imgui\imgui_impl_glfw_gl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="src\blockMaterials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initBlockData.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initBlockData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1387,10 +1393,13 @@
     <ClInclude Include="src\git\Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\AmbientFactors.h">
+    <ClInclude Include="src\VertexData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\VertexData.h">
+    <ClInclude Include="src\blockMaterials.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\git\nholmanjson\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1404,5 +1413,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="x64\Notes.txt" />
+    <Text Include="Res\BlockData\material_shader.txt" />
   </ItemGroup>
 </Project>
