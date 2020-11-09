@@ -6,8 +6,8 @@ glm::vec3 camUp = glm::vec3(0.0f, 0.1f, 0.0f);
 float dt = 0.0f;
 float lastFrame = 0.0f;
 
-float lastX = 400 , lastY = 300;
-float xoff = 0.0f, yoff = 0.0f;
+double lastX = 400 , lastY = 300;
+double xoff = 0.0f, yoff = 0.0f;
 
 bool firstMouse = true;
 

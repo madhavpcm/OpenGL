@@ -1,4 +1,4 @@
-#include <Gl/glew.h>
+#include <GL/glew.h>
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include <conio.h>
@@ -7,7 +7,7 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "initBlockData.h"
+//#include "initBlockData.h"
 
 #include "Texture.h"
 #include "blockMaterials.h"
@@ -19,11 +19,12 @@
 #include "Shader.h"
 #include "Renderer.h"
 
-#include "git/imgui/imgui.h"
-#include "git/imgui/imgui_impl_glfw_gl3.h"
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw_gl3.h>
 
 #include "VertexData.h"
 #include "camera.h"
+#include "blockMaterials.h"
 #include "Input.h"
 //camera s
 bool show_demo_window = true;
@@ -70,7 +71,7 @@ int main(void)
     int blockSelector=0;
     
     std::vector <block_Materials> database(25);
-    initBlockDatas(database);
+    readJsonFileStatic(database);
     block_Materials s;
     
     
@@ -81,7 +82,6 @@ int main(void)
     la.Bind();
     float theta = 0.0f;
     va.AddBuffer(vb, layout);
-
     la.AddBuffer(vb, layout);
 
     IndexBuffer ib(index, 36);
@@ -114,7 +114,8 @@ int main(void)
         /* Render here */
         renderer.Clear();
         lightRenderer.Clear();
-
+        s = database[blockSelector];
+        s.printData();
         float radius = 10.0f;
 
         float currentFrame = glfwGetTime();
@@ -128,7 +129,6 @@ int main(void)
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         shader.Bind();
-        
         shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
         shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setUniformMat4f("view", view);
@@ -167,9 +167,9 @@ int main(void)
         {
             static int counter = 0;
             // Display some text (you can use a format string too)
-            ImGui::Text("Ambience Controls");
+            ImGui::Text("Block Color");
 
-            ImGui::SliderInt("Shinyness", &blockSelector ,0, 24);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            ImGui::SliderInt("BlockType", &blockSelector ,0, 24);            // Edit 1 float using a slider from 0.0f to 1.0f    
             
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
