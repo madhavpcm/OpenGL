@@ -158,6 +158,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\camera.cpp" />
+    <ClCompile Include="src\light_Type.cpp" />
     <ClCompile Include="src\blockMaterials.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\ErrorChecker.cpp" />
@@ -175,6 +177,7 @@
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\light_Type.h" />
     <ClInclude Include="src\blockMaterials.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\VertexData.h" />
@@ -189,6 +192,7 @@
     <ClInclude Include="src\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Res\RAW\box1.png" />
     <Image Include="Res\RAW\ez.png" />
     <Image Include="Res\RAW\EZ2.png" />
   </ItemGroup>

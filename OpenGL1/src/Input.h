@@ -1,7 +1,7 @@
 #pragma once
 
 float mixValue = 0.5, ss =0.5f;
-void processInput(GLFWwindow* window) {
+void processInput(GLFWwindow* window , Camera& cam) {
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -26,38 +26,29 @@ void processInput(GLFWwindow* window) {
             ss = 0.0f;
     }
     
-    float cameraSpeed = 2.5f * dt;
-    camFront.x = cos(glm::radians(yaw));
-    camFront.z = sin(glm::radians(yaw));
-    camFront = glm::normalize(camFront);;
+    cam.UpdateCameraSpeed(DT , 2.5f);
+    cam.UpdateFront();
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camPos += cameraSpeed * camFront;
+        cam.UpdatePos(1.0f);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camPos -= cameraSpeed * camFront;
+        cam.UpdatePos(-1.0f);//cam.UpdatePos(-1)
+
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         //camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
-        yaw -= cameraSpeed * 50;
-
-        camFront.x = cos(glm::radians(yaw));
-        camFront.z = sin(glm::radians(yaw));
-        camFront = glm::normalize(camFront);
+        cam.RotateCamera(-50);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         //camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
-        yaw += cameraSpeed * 50;
-        
-        camFront.x = cos(glm::radians(yaw));
-        camFront.z = sin(glm::radians(yaw));
-        camFront = glm::normalize(camFront);
+        cam.RotateCamera(50);
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camPos -= glm::normalize(-camUp) * cameraSpeed;
+        cam.UpdateUp(-1.0f);//cam.UpdateUp
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        camPos += glm::normalize(-camUp) * cameraSpeed;
+        cam.UpdateUp(1.0f);
 
 }
-void mouse_input(GLFWwindow* window , double xpos , double ypos) {
+/*void mouse_input(GLFWwindow* window , double xpos , double ypos) {
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;
@@ -81,5 +72,22 @@ void mouse_input(GLFWwindow* window , double xpos , double ypos) {
     camDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     camDir.y = sin(glm::radians(pitch));
     camDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    camFront = glm::normalize(camDir);
+    //camFront = glm::normalize(camDir);
+}*/
+inline void imGui_slider_input() {
+    glm::vec3 lamb_vec = lblock.GetAmbientStrength();
+    float* lamb = glm::value_ptr(lamb_vec);
+    ImGui::SliderFloat3("light.ambient", lamb, 0.0f, 1.0f, "%.3f", 1.0f);
+    lblock.SetAmbientStrength(glm::make_vec3(lamb));
+
+    glm::vec3 ldiff_vec = lblock.GetDiffusionFactor();
+    float* ldiff = glm::value_ptr(ldiff_vec);
+    ImGui::SliderFloat3("light.diffusion", ldiff, 0.0f, 1.0f, "%.3f", 1.0f);
+    lblock.SetDiffusionFactor(glm::make_vec3(ldiff));
+
+    glm::vec3 lspec_vec = lblock.GetSpecularStrength();
+    float* lspec = glm::value_ptr(lspec_vec);
+    ImGui::SliderFloat3("light.specular", lspec, 0.0f, 1.0f, "%.3f", 1.0f);
+    lblock.SetSpecularStrength(glm::make_vec3(lspec));
+    
 }

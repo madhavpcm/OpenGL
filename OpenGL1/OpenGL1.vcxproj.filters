@@ -60,6 +60,12 @@
     <ClCompile Include="src\git\stbimage\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\light_Type.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ErrorChecker.h">
@@ -98,12 +104,18 @@
     <ClInclude Include="src\blockMaterials.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\light_Type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Res\RAW\ez.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Res\RAW\EZ2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\RAW\box1.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

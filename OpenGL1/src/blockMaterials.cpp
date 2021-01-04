@@ -3,37 +3,46 @@
 #include<iostream>
 #include<stdint.h>
 #include<fstream>
+using namespace Json;
 
-const void block_Materials::setAmbientStrength(glm::vec3 a) {
-	ambientStrength = a;
-}
-const void block_Materials::setDiffusionFactor(glm::vec3 a) {
-	diffusionFactor = a;
-}
-const void block_Materials::setSpecularStrength(glm::vec3 a) {
-	specularStrength = a;
-}
-const void block_Materials::setShinynessExponent(int a) {
-	shinynessExponent = a;
-}
-const void block_Materials::printData()
-{
-	std::cout << blockName << std::endl;
-}
-const void block_Materials::setBlockName(std::string a) {
-	blockName = a;
-}
-block_Materials::block_Materials() :
-	blockName("default"),
-	ambientStrength(glm::vec3(0.1f)),
-	diffusionFactor(glm::vec3(0.3f)),
-	specularStrength(glm::vec3(0.4f)),
-	shinynessExponent(5)
+GlobalBlock::GlobalBlock() :
+	m_AmbientStrength(glm::vec3(0.21f,0.1f , 0.2f)),
+	m_DiffusionFactor(glm::vec3(0.3f)),
+	m_SpecularStrength(glm::vec3(0.4f))
 {
 	
 }
-using namespace Json;
-void readJsonFileStatic(std::vector<block_Materials> &database) {
+const void GlobalBlock::SetAmbientStrength(glm::vec3 a) {
+	m_AmbientStrength = a;
+}
+const void GlobalBlock::SetDiffusionFactor(glm::vec3 a) {
+	m_DiffusionFactor = a;
+}
+const void GlobalBlock::SetSpecularStrength(glm::vec3 a) {
+	m_SpecularStrength = a;
+}
+MaterialBlock::MaterialBlock() 
+	:m_ShinynessExponent(6.0),m_BlockName("NONAME")
+{}
+const void MaterialBlock::SetShinynessExponent(std::uint32_t a) {
+	m_ShinynessExponent = a;
+}
+const void MaterialBlock::SetBlockName(std::string a)
+{
+	m_BlockName = a;
+}
+
+FarLightBlock::FarLightBlock() :
+	m_Direction(glm::vec3(3.0f, 4.0f, 2.0f))
+
+{
+}
+const void FarLightBlock::SetDirection(glm::vec3 a)
+{
+	m_Direction = a;
+}
+
+void readJsonFileStatic(std::vector<MaterialBlock> &database) {
 	Json::Value root;
 	std::ifstream data;
 	Json::CharReaderBuilder builder;
@@ -64,12 +73,41 @@ void readJsonFileStatic(std::vector<block_Materials> &database) {
 		diffuse_temp =  glm::vec3(parser[i][3], parser[i][4], parser[i][5]);
 		specular_temp = glm::vec3(parser[i][6], parser[i][7], parser[i][8]);
 		shinyness_temp = parser[i][9];
-		database[i].setBlockName(block);
-		database[i].setAmbientStrength(ambient_temp);
-		database[i].setDiffusionFactor(diffuse_temp);
-		database[i].setSpecularStrength(specular_temp);
-		database[i].setShinynessExponent(shinyness_temp);
+		database[i].SetBlockName(block);
+		database[i].SetAmbientStrength(ambient_temp);
+		database[i].SetDiffusionFactor(diffuse_temp);
+		database[i].SetSpecularStrength(specular_temp);
+		database[i].SetShinynessExponent(shinyness_temp);
 		i++;
 
 		}
+}
+
+PointLightBlock::PointLightBlock()
+	:m_Position(glm::vec3(1.0f , 2.0f ,3.0f))
+{
+}
+const void PointLightBlock::SetPosition(glm::vec3 a)
+{
+	m_Position = a;
+}
+
+SpotLightBlock::SpotLightBlock() 
+	:m_CutoffPhi(glm::cos(glm::radians(12.5f))),m_SpotDirection(glm::vec3(1.0f, 1.0f ,1.0f)),
+	m_CutoffInner(glm::cos(25.0f)),m_CutoffOuter(glm::cos(35.0f))
+{
+}
+const void SpotLightBlock::SetCutoffPhi(float a) {
+	m_CutoffPhi = a;
+}
+const void SpotLightBlock::SetCutoffInner(float a)
+{
+	m_CutoffInner = a;
+}
+const void SpotLightBlock::SetCutoffOuter(float a)
+{
+	m_CutoffOuter = a;
+}
+const void SpotLightBlock::SetSpotDirection(glm::vec3 a) {
+	m_SpotDirection = a;
 }

@@ -7,7 +7,7 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-//#include "initBlockData.h"
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Texture.h"
 #include "blockMaterials.h"
@@ -18,14 +18,16 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Renderer.h"
-
+float DT = 0.0f;
+float LAST_FRAME = 0.0f;
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw_gl3.h>
-
+#include"light_Type.h"
 #include "VertexData.h"
 #include "camera.h"
-#include "blockMaterials.h"
 #include "Input.h"
+#include "blockMaterials.h"
+
 //camera s
 bool show_demo_window = true;
 bool show_another_window = false;
@@ -63,20 +65,18 @@ int main(void)
     std::cout << glGetString(GL_VERSION) << std::endl;
     GL_CHECK(glEnable(GL_DEPTH_TEST));
     GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    
+    Camera cam;
     VertexArray va,la;
-    VertexBuffer vb(vertices, 6* 4 * 6 *sizeof(float));
+    VertexBuffer vb(vertices, 6* 4 * 8 *sizeof(float));
     VertexBufferLayout layout;
 
-    int blockSelector=0;
-    
-    std::vector <block_Materials> database(25);
     readJsonFileStatic(database);
-    block_Materials s;
+    MaterialBlock currentBlock;
     
     
     layout.Push<float>(3);//Positions 
     layout.Push<float>(3);//Normal 
+    layout.Push<float>(2);
     
     va.Bind();
     la.Bind();
@@ -85,10 +85,11 @@ int main(void)
     la.AddBuffer(vb, layout);
 
     IndexBuffer ib(index, 36);
+    lblock.SetPosition( glm::vec3(1.5f, 0.4f, 2.3f));
     
     Shader shader("Res/shader/"); 
     Shader lightshader("Res/shader/lightcube/");
-
+    Texture box1("Res/RAW/box1.png"), box1speccol("Res/RAW/box1spec.png"),box1emis("Res/RAW/box1emis.jpg");
     float r = 0.0f;
     float i = 0.05f;
 
@@ -105,74 +106,94 @@ int main(void)
     ImGui_ImplGlfwGL3_Init(window, true);
     ImGui::StyleColorsDark();
 
+    for (int i = 0; i < sizeof(pointLightPositions) / sizeof(glm::vec3); i++) {
+        pblock[i].SetPosition(pointLightPositions[i]);
+    }
     while (!glfwWindowShouldClose(window))
     {
         //Input
-        processInput(window);
         //calc
-
+        GL_CHECK(glClearColor(0.0f, 0.3f, 0.3f, 0.3f));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
         /* Render here */
-        renderer.Clear();
-        lightRenderer.Clear();
-        s = database[blockSelector];
-        s.printData();
+
+        currentBlock = database[blockSelector];
+        
         float radius = 10.0f;
 
-        float currentFrame = glfwGetTime();
-        dt = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        double CURRENT_FRAME = glfwGetTime();
+        DT = CURRENT_FRAME - LAST_FRAME;
+        LAST_FRAME= CURRENT_FRAME;
+        processInput(window, cam);
 
         glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        view = glm::lookAt(camPos, camPos + camFront, camUp);
+        view = glm::lookAt(cam.GetCameraPosition(), cam.GetCameraPosition() + cam.GetCameraFrontVec(), cam.GetCameraUpVec());
 
         glm::mat4 proj = glm::mat4(1.0f);
         proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         shader.Bind();
-        shader.setUniform3f("lightColor", 1.0f + mixValue, 1.0f +mixValue, 1.0f +mixValue);
-        shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setUniformMat4f("view", view);
         shader.setUniformMat4f("projection", proj);
-        shader.setUniformvec3("lightPos" , lightPositions[0]);
-        shader.setUniformvec3("viewPos", camPos);
-        shader.setUniformblock_Material(s);
+        shader.setUniformvec3("viewPos", cam.GetCameraPosition());
 
-        for (int I = 0; I < 10; I++) {
+       // shader.setUniformblock_Material(currentBlock);
+        shader.setUniformSpotLightBlock(lblock , "lblock");
+        shader.setUniformFarLightBlock(fblock , "fblock");
+        //shader.setUniformvec3("tBlock.specular", glm::vec3(0.2f));
+        shader.setUniformvec3("lblock.position", cam.GetCameraPosition());
+        shader.setUniformvec3("lblock.direction", cam.GetCameraFrontVec());
+
+        shader.setUniform1f("tBlock.shine",7.0f);
+        box1.Bind(1);
+        box1speccol.Bind(2);
+        box1emis.Bind(3);
+        shader.setUniform1i("tBlock.diffuse", 1);
+        shader.setUniform1i("tBlock.specular", 2);
+        shader.setUniform1i("tBlock.emission", 3);
+       
+        for (int I = 0; I < sizeof(cubePositions)/sizeof(glm::vec3); I++) {
             //Model of other cubes
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[I]);
+            model = glm::rotate(model, glm::radians(20.0f * I),glm::normalize( glm::vec3(1.0f,0.3f , 2.1f )));
             model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
             shader.setUniformMat4f("model", model);
             renderer.Draw(va, ib, shader);
         }
 
-        //tex1.Bind(0);
-        //tex2.Bind(1);
-
         ImGui_ImplGlfwGL3_NewFrame();
        
         //Model of light cub
-        glm::mat4 lmodel = glm::mat4(1.0f);
-        lmodel = glm::translate(lmodel, lightPositions[0]);
-        lmodel = glm::scale(lmodel, glm::vec3(0.3f));
         lightshader.Bind();
         lightshader.setUniformMat4f("projection", proj);
         lightshader.setUniformMat4f("view", view);
-        lightshader.setUniformMat4f("model", lmodel);        
-        lightRenderer.Draw(la, ib, lightshader);
+        //for (int I = 0; I < sizeof(pointLightPositions) / sizeof(glm::vec3); I++) {
+          //  shader.setUniformPointLightBlock(pblock[I], "pblock[" +std::to_string(I) + "]" );
+        //}
+        for (int I = 0; I < sizeof(pointLightPositions)/sizeof(glm::vec3); I++) {
 
-        shader.Unbind();
-        lightshader.Unbind();
+            glm::mat4 lmodel = glm::mat4(1.0f);
+            lmodel = glm::translate(lmodel, pointLightPositions[I]);
+            lmodel = glm::rotate(lmodel, glm::radians(23.9f * I * 3.2f), glm::normalize(glm::vec3(1.0f, 0.3f, 2.2f)));
+            lmodel = glm::scale(lmodel, glm::vec3(0.3f));
+            lightshader.setUniformMat4f("model", lmodel);   
+            lightRenderer.Draw(la, ib, lightshader);
+        }
+        
+        
+
         //Imgui
         {
             static int counter = 0;
             // Display some text (you can use a format string too)
             ImGui::Text("Block Color");
-
-            ImGui::SliderInt("BlockType", &blockSelector ,0, 24);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            
+            ImGui::SliderInt(currentBlock.GetBlockName().c_str(), &blockSelector ,0, 24);  
+            // Edit 1 float using a slider from 0.0f to 1.0f    
             
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
+            imGui_slider_input();
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state
             ImGui::Checkbox("Another Window", &show_another_window);
 
@@ -189,6 +210,13 @@ int main(void)
         glfwSwapBuffers(window);
         /* Poll for and process events */
         glfwPollEvents();
+        renderer.Clear();
+        lightRenderer.Clear();
+        box1.UnBind();
+        box1speccol.UnBind();
+        box1emis.UnBind();
+        shader.Unbind();
+        lightshader.Unbind();
     }
     
     ImGui_ImplGlfwGL3_Shutdown();

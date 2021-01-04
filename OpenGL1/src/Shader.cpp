@@ -6,8 +6,10 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
 #include <streambuf>
 #include "Shader.h"
+#include "light_Type.h"
 #include "ErrorChecker.h"
 namespace fs = std::filesystem;
 
@@ -23,13 +25,14 @@ Shader::~Shader()
 {
     GL_CHECK(glDeleteProgram(m_RendererID));
 }
+
 void Shader::Bind() const {
     GL_CHECK(glUseProgram(m_RendererID));
 }
-
 void Shader::Unbind() const {
     GL_CHECK(glUseProgram(0));
 }
+
 void Shader::setUniform1f(const std::string& name, float v0) {
     GL_CHECK(glUniform1f(GetUniformLocation(name), v0));
 }
@@ -52,14 +55,46 @@ void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
 void Shader::setUniformvec3(const std::string& name, glm::vec3 v) {
     GL_CHECK(glUniform3f(GetUniformLocation(name), v.x, v.y ,v.z));
 }
-void Shader::setUniformblock_Material(block_Materials& b) {
-
-    setUniformvec3("block.ambientStrength",  b.getAmbientStrength());
-    setUniformvec3("block.diffusionFactor",  b.getDiffusionFactor());
-    setUniformvec3("block.specularStrength", b.getSpecularStrength());
-    setUniform1i("block.shineExp", b.getshinynessExponent());
+void Shader::setUniformBlock_Material(MaterialBlock& b,const std::string uniform_name) {
+    //name of blocks to be checked
+    setUniformvec3(uniform_name +".ambientStrength",  b.GetAmbientStrength());
+    setUniformvec3(uniform_name +".diffusionFactor",  b.GetDiffusionFactor());
+    setUniformvec3(uniform_name +".specularStrength", b.GetSpecularStrength());
+    setUniform1f(uniform_name +".shineExp", b.GetshinynessExponent());
 
 }
+
+void Shader::setUniformFarLightBlock(FarLightBlock& b,const std::string uniform_name)
+{
+    setUniformvec3(uniform_name +".diffusionFactor",  b.GetDiffusionFactor());
+    setUniformvec3(uniform_name +".amb",  b.GetAmbientStrength());
+    setUniformvec3(uniform_name +".specularStrength", b.GetSpecularStrength());
+    setUniformvec3(uniform_name +".direction", b.GetDirection());
+}
+void Shader::setUniformPointLightBlock(PointLightBlock& b,  std::string uniform_name) {
+    setUniformvec3(uniform_name +".diffusionFactor", b.GetDiffusionFactor());
+    setUniformvec3(uniform_name +".ambient", b.GetAmbientStrength());
+    setUniformvec3(uniform_name +".specularStrength", b.GetSpecularStrength());
+    setUniformvec3(uniform_name +".position", b.GetPosition());
+    setUniform1f(uniform_name +".constant", 1.0f);
+    setUniform1f(uniform_name +".lconstant", 0.09f);
+    setUniform1f(uniform_name +".qconstant", 0.032f);
+}
+void Shader::setUniformSpotLightBlock(SpotLightBlock& b, const std::string uniform_name ) {
+
+    setUniformvec3(uniform_name +".diffusionFactor", b.GetDiffusionFactor());
+    setUniformvec3(uniform_name +".amb", b.GetAmbientStrength());
+    setUniformvec3(uniform_name +".specularStrength", b.GetSpecularStrength());
+  //  setUniform1f(uniform_name +".cutoffphi", b.GetCutoffPhi());
+    setUniform1f(uniform_name +".cutoffinner", b.GetCutoffInner());
+    setUniform1f(uniform_name +".cutoffouter", b.GetCutoffOuter());
+    setUniformvec3(uniform_name +".position", b.GetPosition());
+    setUniform1f(uniform_name +".constant", 1.0f);
+    setUniform1f(uniform_name +".lconstant", 0.09f);
+    setUniform1f(uniform_name +".qconstant", 0.032f);
+    //setUniform1f(uniform_name +".position", camPos)
+}
+
 
 int Shader::GetUniformLocation(const std::string& name) {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
@@ -75,7 +110,6 @@ int Shader::GetUniformLocation(const std::string& name) {
     }
     
 }
-
  ShaderSource Shader::parseshader(const std::string& path) {
     std::string ss[2];//0 for vertex, 1 for fragment
 
