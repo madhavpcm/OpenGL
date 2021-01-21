@@ -1,0 +1,5 @@
+D:/Dev/Projects/lopgl/OpenGL/CMakeFiles/edit_cache.dir
+D:/Dev/Projects/lopgl/OpenGL/CMakeFiles/rebuild_cache.dir
+D:/Dev/Projects/lopgl/OpenGL/OpenGL1/CMakeFiles/OpenGL1.dir
+D:/Dev/Projects/lopgl/OpenGL/OpenGL1/CMakeFiles/edit_cache.dir
+D:/Dev/Projects/lopgl/OpenGL/OpenGL1/CMakeFiles/rebuild_cache.dir

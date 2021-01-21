@@ -3,6 +3,8 @@
 #include<string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "blockMaterials.h"
+#include "light_Type.h"
 
 struct ShaderSource {
 	std::string vSource;
@@ -30,6 +32,13 @@ public:
 	void setUniform3f(const std::string& name, float v0, float v1, float v2);
 	void setUniform4f(const std::string& name ,float v0, float v1, float v2, float v3);
 	void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
+	void setUniformvec3(const std::string& name, glm::vec3 vec);
+
+	void setUniformBlock_Material(MaterialBlock &b ,   const std::string uniform_name);
+	void setUniformFarLightBlock(FarLightBlock& b,	   const std::string uniform_name);
+	void setUniformPointLightBlock(PointLightBlock& b, const std::string uniform_name);
+	void setUniformSpotLightBlock(SpotLightBlock& b,   const std::string uniform_name);
+	
 
 	ShaderSource parseshader(const std::string& path);
 	unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader);
