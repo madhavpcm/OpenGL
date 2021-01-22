@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <assimp/Importer.hpp>
 
 #include "Texture.h"
 #include "blockMaterials.h"
@@ -90,7 +91,7 @@ int main(void)
     
     Shader shader("Res/shader/"); 
     Shader lightshader("Res/shader/lightcube/");
-    Texture box1("Res/RAW/box1.png"), box1speccol("Res/RAW/box1spec.png"),box1emis("Res/RAW/box1emis.jpg");
+    Texture box1("Res/RAW/box1.png" , "diffuse"), box1speccol("Res/RAW/box1spec.png","diffuse"),box1emis("Res/RAW/box1emis.jpg","diffuse");
     float r = 0.0f;
     float i = 0.05f;
 
